@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BookClub.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookClub.Models
 {
@@ -9,8 +10,8 @@ namespace BookClub.Models
         [Display(Name = "Книги")]
         public Book? Book { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Display(Name = "Пользователь")]
-        public User? User { get; set; }
+        public ApplicationIdentityUser? User { get; set; }
     }
 }

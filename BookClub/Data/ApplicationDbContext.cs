@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookClub.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationIdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -13,6 +13,5 @@ namespace BookClub.Data
 
         public DbSet<ReadBook> ReadBooks { get; set; }
         public DbSet<Book> Books { get; set; }
-        public DbSet<User> Users { get; set; }
     }
 }

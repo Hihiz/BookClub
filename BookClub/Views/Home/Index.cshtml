@@ -6,6 +6,8 @@
 
 <h1>Список книг</h1>
 
+<p>User Id: @ViewData["UserId"]</p>
+
 <table class="table">
     <thead>
         <tr>            
@@ -26,7 +28,7 @@
                                             </td>
 
                                             <td>
-                                                    <a asp-action="AddListBook" asp-route-id="@item.Id">Добавить в список</a>                                           
+                                                    <a asp-action="AddListBook" asp-route-id="@item.Id">Добавить в список</a>                                                                                                                                          
                                             </td>
                                         </tr>
         }

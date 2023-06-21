@@ -1,9 +1,9 @@
 ﻿using BookClub.Data;
 using BookClub.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace BookClub.Controllers
 {
@@ -12,12 +12,25 @@ namespace BookClub.Controllers
     {
         private readonly ApplicationDbContext _db;
 
-        public HomeController(ApplicationDbContext db) => _db = db;
+        private readonly UserManager<ApplicationIdentityUser> _userManager;
 
-        public async Task<IActionResult> Index() => View(_db.Books.ToList());
+        public HomeController(ApplicationDbContext db, UserManager<ApplicationIdentityUser> userManager)
+        {
+            _db = db;
+            _userManager = userManager;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            ViewData["UserId"] = _userManager.GetUserId(User);
+
+            return View(_db.Books.ToList());
+        }
 
         public async Task<IActionResult> AddListBook(int id)
         {
+            var userId = _userManager.GetUserId(User);
+
             if (id == 0)
             {
                 return NotFound();
@@ -30,7 +43,7 @@ namespace BookClub.Controllers
                 ReadBook readBook = new ReadBook()
                 {
                     BookId = book.Id,
-                    UserId = 1
+                    UserId = userId
                 };
 
                 try
@@ -47,9 +60,11 @@ namespace BookClub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> CheckList(int id = 1)
+        public async Task<IActionResult> CheckList()
         {
-            var applicationContext = _db.ReadBooks.Include(r => r.Book).Include(r => r.User).Where(r => r.UserId == id);
+            var userId = _userManager.GetUserId(User);
+
+            var applicationContext = _db.ReadBooks.Include(r => r.Book).Include(r => r.User).Where(r => r.UserId == userId);
 
             return View(await applicationContext.ToListAsync());
         }
@@ -71,12 +86,6 @@ namespace BookClub.Controllers
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
